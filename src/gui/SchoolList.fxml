@@ -9,14 +9,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox prefHeight="236.0" prefWidth="369.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1">
+<VBox prefHeight="236.0" prefWidth="369.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SchoolListController">
    <children>
-      <ToolBar prefHeight="40.0" prefWidth="200.0">
-        <items>
-          <Button mnemonicParsing="false" text="New" />
-        </items>
-      </ToolBar>
       <Label text="School  Registration">
          <font>
             <Font name="System Bold" size="14.0" />
@@ -25,10 +19,15 @@
             <Insets left="5.0" top="5.0" />
          </padding>
       </Label>
-      <TableView prefHeight="200.0" prefWidth="200.0">
+      <ToolBar prefHeight="40.0" prefWidth="200.0">
+         <items>
+          <Button fx:id="btNew" mnemonicParsing="false" onAction="#btNewAction" text="New" />
+         </items>
+      </ToolBar>
+      <TableView fx:id="tableViewSchool" prefHeight="200.0" prefWidth="200.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Id" />
-          <TableColumn prefWidth="75.0" text="Name" />
+          <TableColumn fx:id="tableColumnId" prefWidth="75.0" text="Id" />
+          <TableColumn fx:id="tableColumnName" prefWidth="75.0" text="Name" />
         </columns>
       </TableView>
    </children>

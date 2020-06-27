@@ -1,18 +1,27 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.School;
 import model.services.SchoolService;
@@ -36,8 +45,9 @@ public class SchoolListController implements Initializable{
 	private ObservableList<School> obsList;
 	
 	@FXML
-	public void btNewAction() {
-		System.out.println("btNewAction");
+	public void btNewAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/SchoolForm.fxml", parentStage);
 	}
 
 	public void setSchoolService(SchoolService service) {
@@ -64,6 +74,24 @@ public class SchoolListController implements Initializable{
 		List<School> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewSchool.setItems(obsList);
+	}
+	
+	private void createDialogForm(String absoluteName, Stage parentStage) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Enter School data");
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+		}
+		catch (IOException e) {
+			Alerts.showAlert("IO Exception", "Error loagind view", e.getMessage(), AlertType.ERROR);
+		}
 	}
 	
 }

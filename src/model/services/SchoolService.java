@@ -1,17 +1,16 @@
 package model.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import model.dao.DaoFactory;
+import model.dao.SchoolDao;
 import model.entities.School;
 
 public class SchoolService {
 
-	public List<School> findAll(){
-		List<School> list = new ArrayList<>();
-		list.add(new School(1, "Chapeuzinho Vermelho"));
-		list.add(new School(2, "Branca de Neve"));
-		list.add(new School(3, "Ze Carioca"));
-		return list;
+	SchoolDao dao = DaoFactory.createSchoolDao();
+
+	public List<School> findAll() {
+		return dao.findAll();
 	}
 }

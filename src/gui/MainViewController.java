@@ -16,7 +16,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
-
 public class MainViewController implements Initializable {
 
 	@FXML
@@ -24,25 +23,25 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	private MenuItem menuItemSchool;
-	
+
 	@FXML
 	private MenuItem menuItemAbout;
-	
+
 	@FXML
 	public void onMenuItemStudentAction() {
 		System.out.println("onMenuItemStudentAction");
 	}
-	
+
 	@FXML
 	public void onMenuItemSchoolAction() {
-		System.out.println("onMenuItemSchoolAction");
+		loadView("/gui/SchoolList.fxml");
 	}
-	
+
 	@FXML
 	public void onMenuItemAboutAction() {
 		loadView("/gui/About.fxml");
 	}
-	
+
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
 	}
@@ -51,16 +50,15 @@ public class MainViewController implements Initializable {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			VBox newVBox = loader.load();
-			
+
 			Scene mainScene = Main.getMainScene();
 			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-			
+
 			Node mainMenu = mainVBox.getChildren().get(0);
 			mainVBox.getChildren().clear();
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}

@@ -13,4 +13,13 @@ public class SchoolService {
 	public List<School> findAll() {
 		return dao.findAll();
 	}
+	
+	public void saveOrUptade(School obj) {
+		if(obj.getId() == null) {
+			dao.insert(obj);
+		}
+		else {
+			dao.update(obj);
+		}
+	}
 }

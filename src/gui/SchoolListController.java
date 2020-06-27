@@ -84,6 +84,7 @@ public class SchoolListController implements Initializable{
 			
 			SchoolFormController controller = loader.getController();
 			controller.setSchool(obj);
+			controller.setSchoolService(new SchoolService());
 			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();

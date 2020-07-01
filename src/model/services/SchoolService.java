@@ -22,4 +22,8 @@ public class SchoolService {
 			dao.update(obj);
 		}
 	}
+	
+	public void remove(School obj) {
+		dao.deleteById(obj.getId());
+	}
 }

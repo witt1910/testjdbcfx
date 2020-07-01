@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -26,7 +27,7 @@ import javafx.stage.Stage;
 import model.entities.School;
 import model.services.SchoolService;
 
-public class SchoolListController implements Initializable{
+public class SchoolListController implements Initializable, DataChangeListener{
 
 	private SchoolService service;
 	
@@ -85,6 +86,7 @@ public class SchoolListController implements Initializable{
 			SchoolFormController controller = loader.getController();
 			controller.setSchool(obj);
 			controller.setSchoolService(new SchoolService());
+			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();
@@ -98,6 +100,11 @@ public class SchoolListController implements Initializable{
 		catch (IOException e) {
 			Alerts.showAlert("IO Exception", "Error loagind view", e.getMessage(), AlertType.ERROR);
 		}
+	}
+
+	@Override
+	public void onDataChanged() {
+		updateTableView();
 	}
 	
 }

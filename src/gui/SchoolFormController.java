@@ -1,19 +1,22 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DbException;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import model.entities.School;
 import model.services.SchoolService;
 
@@ -22,6 +25,9 @@ public class SchoolFormController implements Initializable {
 	private School entity;
 	
 	private SchoolService service;
+	
+	
+	private List<DataChangeListener> dataChangeListener = new ArrayList<>();	
 	
 	@FXML
 	private TextField txtId;
@@ -46,6 +52,10 @@ public class SchoolFormController implements Initializable {
 		this.service = service;
 	}
 	
+	public void subscribeDataChangeListener(DataChangeListener listener) {
+		dataChangeListener.add(listener);
+	}
+	
 	@FXML
 	public void onBtSaveAction(ActionEvent event) {
 		if (entity == null) {
@@ -57,6 +67,7 @@ public class SchoolFormController implements Initializable {
 		try {
 			entity = getFormData();
 			service.saveOrUptade(entity);
+			notifyDataChangelisteners();
 			Utils.currentStage(event).close();
 		}
 		catch(DbException e) {
@@ -64,6 +75,12 @@ public class SchoolFormController implements Initializable {
 		}
 	}
 	
+	private void notifyDataChangelisteners() {
+		for(DataChangeListener listener : dataChangeListener) {
+			listener.onDataChanged();
+		}
+	}
+
 	private School getFormData() {
 		School obj = new School();
 		

@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -133,6 +135,25 @@ public class StudentFormController implements Initializable {
 		}
 		obj.setName(txtName.getText());
 
+		if (dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "Field cant be empty");
+		} else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
+		}
+		
+		if (txtDemand.getText() == null || txtDemand.getText().trim().equals("")) {
+			exception.addError("demand", "Field cant be empty");
+		}
+		obj.setDemand(txtDemand.getText());
+
+		if (txtGrade.getText() == null || txtGrade.getText().trim().equals("")) {
+			exception.addError("grade", "Field cant be empty");
+		}
+		obj.setGrade(Utils.tryParseToInt(txtGrade.getText()));
+
+		obj.setSchool(comboBoxSchool.getValue());
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -156,7 +177,7 @@ public class StudentFormController implements Initializable {
 		Constraints.setTextFieldMaxLength(txtDemand, 100);
 		Constraints.setTextFieldInteger(txtGrade);
 		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
-		
+
 		initializeComboBoxSchool();
 	}
 
@@ -171,11 +192,11 @@ public class StudentFormController implements Initializable {
 		if (entity.getBirthDate() != null) {
 			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		}
-		if (entity.getSchool() == null ) {
+		if (entity.getSchool() == null) {
 			comboBoxSchool.getSelectionModel().selectFirst();
 		}
 		comboBoxSchool.setValue(entity.getSchool());
-		
+
 	}
 
 	public void loadAssociatedObjects() {
@@ -190,9 +211,10 @@ public class StudentFormController implements Initializable {
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		}
+		labelErrorName.setText((fields.contains("name") ? errors.get("name") : ""));
+		labelErrorBirthDate.setText((fields.contains("birthDate") ? errors.get("birthDate") : ""));
+		labelErrorDemand.setText((fields.contains("demand") ? errors.get("demand") : ""));
+		labelErrorGrade.setText((fields.contains("grade") ? errors.get("grade") : ""));
 	}
 
 	private void initializeComboBoxSchool() {

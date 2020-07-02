@@ -1,6 +1,8 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -15,7 +17,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -23,6 +27,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Student;
 import model.services.StudentService;
@@ -40,6 +46,15 @@ public class StudentListController implements Initializable, DataChangeListener 
 	@FXML
 	private TableColumn<Student, String> tableColumnName;
 
+	@FXML
+	private TableColumn<Student, Date> tableColumnBirthDate;
+
+	@FXML
+	private TableColumn<Student, String> tableColumnDemand;
+
+	@FXML
+	private TableColumn<Student, Integer> tableColumnGrade;
+	
 	@FXML
 	private TableColumn<Student, Student> tableColumnEDIT;
 
@@ -70,7 +85,11 @@ public class StudentListController implements Initializable, DataChangeListener 
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-
+		tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
+		tableColumnDemand.setCellValueFactory(new PropertyValueFactory<>("demand"));
+		tableColumnGrade.setCellValueFactory(new PropertyValueFactory<>("grade"));
+		
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewStudent.prefHeightProperty().bind(stage.heightProperty());
 	}
@@ -87,26 +106,26 @@ public class StudentListController implements Initializable, DataChangeListener 
 	}
 
 	private void createDialogForm(Student obj, String absoluteName, Stage parentStage) {
-//		try {
-//			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-//			Pane pane = loader.load();
-//
-//			StudentFormController controller = loader.getController();
-//			controller.setStudent(obj);
-//			controller.setStudentService(new StudentService());
-//			controller.subscribeDataChangeListener(this);
-//			controller.updateFormData();
-//
-//			Stage dialogStage = new Stage();
-//			dialogStage.setTitle("Enter Student data");
-//			dialogStage.setScene(new Scene(pane));
-//			dialogStage.setResizable(false);
-//			dialogStage.initOwner(parentStage);
-//			dialogStage.initModality(Modality.WINDOW_MODAL);
-//			dialogStage.showAndWait();
-//		} catch (IOException e) {
-//			Alerts.showAlert("IO Exception", "Error loagind view", e.getMessage(), AlertType.ERROR);
-//		}
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			Pane pane = loader.load();
+
+			StudentFormController controller = loader.getController();
+			controller.setStudent(obj);
+			controller.setStudentService(new StudentService());
+			controller.subscribeDataChangeListener(this);
+			controller.updateFormData();
+
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Enter Student data");
+			dialogStage.setScene(new Scene(pane));
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(parentStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+		} catch (IOException e) {
+			Alerts.showAlert("IO Exception", "Error loagind view", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@Override

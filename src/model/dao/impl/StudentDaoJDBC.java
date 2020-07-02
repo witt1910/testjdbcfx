@@ -134,7 +134,7 @@ public class StudentDaoJDBC implements StudentDao {
 		Student obj = new Student();
 		obj.setId(rs.getInt("Id"));
 		obj.setName(rs.getString("Name"));
-		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setBirthDate(new java.util.Date(rs.getTimestamp("BirthDate").getTime()));
 		obj.setDemand(rs.getString("Demand"));
 		obj.setGrade(rs.getInt("Grade"));
 		obj.setSchool(sch);

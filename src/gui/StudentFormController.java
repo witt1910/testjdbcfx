@@ -14,16 +14,24 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
+import model.entities.School;
 import model.entities.Student;
 import model.exceptions.ValidationException;
+import model.services.SchoolService;
 import model.services.StudentService;
 
 public class StudentFormController implements Initializable {
@@ -31,6 +39,8 @@ public class StudentFormController implements Initializable {
 	private Student entity;
 
 	private StudentService service;
+
+	private SchoolService schoolService;
 
 	private List<DataChangeListener> dataChangeListener = new ArrayList<>();
 
@@ -62,17 +72,23 @@ public class StudentFormController implements Initializable {
 	private Label labelErrorGrade;
 
 	@FXML
+	private ComboBox<School> comboBoxSchool;
+
+	@FXML
 	private Button btSave;
 
 	@FXML
 	private Button btCancel;
 
+	private ObservableList<School> obsList;
+
 	public void setStudent(Student entity) {
 		this.entity = entity;
 	}
 
-	public void setStudentService(StudentService service) {
+	public void setServices(StudentService service, SchoolService schoolService) {
 		this.service = service;
+		this.schoolService = schoolService;
 	}
 
 	public void subscribeDataChangeListener(DataChangeListener listener) {
@@ -140,6 +156,8 @@ public class StudentFormController implements Initializable {
 		Constraints.setTextFieldMaxLength(txtDemand, 100);
 		Constraints.setTextFieldInteger(txtGrade);
 		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
+		
+		initializeComboBoxSchool();
 	}
 
 	public void updateFormData() {
@@ -153,6 +171,20 @@ public class StudentFormController implements Initializable {
 		if (entity.getBirthDate() != null) {
 			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		}
+		if (entity.getSchool() == null ) {
+			comboBoxSchool.getSelectionModel().selectFirst();
+		}
+		comboBoxSchool.setValue(entity.getSchool());
+		
+	}
+
+	public void loadAssociatedObjects() {
+		if (schoolService == null) {
+			throw new IllegalStateException("SchoolService was null");
+		}
+		List<School> list = schoolService.findAll();
+		obsList = FXCollections.observableArrayList(list);
+		comboBoxSchool.setItems(obsList);
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
@@ -161,5 +193,17 @@ public class StudentFormController implements Initializable {
 		if (fields.contains("name")) {
 			labelErrorName.setText(errors.get("name"));
 		}
+	}
+
+	private void initializeComboBoxSchool() {
+		Callback<ListView<School>, ListCell<School>> factory = lv -> new ListCell<School>() {
+			@Override
+			protected void updateItem(School item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty ? "" : item.getName());
+			}
+		};
+		comboBoxSchool.setCellFactory(factory);
+		comboBoxSchool.setButtonCell(factory.call(null));
 	}
 }

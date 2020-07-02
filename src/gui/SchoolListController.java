@@ -110,6 +110,7 @@ public class SchoolListController implements Initializable, DataChangeListener {
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loagind view", e.getMessage(), AlertType.ERROR);
 		}
 	}
